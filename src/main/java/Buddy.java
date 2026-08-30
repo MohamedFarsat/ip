@@ -5,7 +5,6 @@ import java.util.Scanner;
  */
 public class Buddy {
     public static final String NAME = "Buddy";
-    private static final int MAX_TASKS = 100;
     private static final String LINE = "---------------------------------------------------------------";
 
     /**
@@ -15,8 +14,7 @@ public class Buddy {
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        TaskList tasks = new TaskList();
 
         showGreeting();
 
@@ -29,22 +27,21 @@ public class Buddy {
                 break;
             }
             if (input.equals("list")) {
-                showTasks(tasks, taskCount);
+                showTasks(tasks);
             } else if (input.startsWith("mark ")) {
-                markTask(input, tasks, taskCount);
+                markTask(input, tasks);
             } else if (input.startsWith("unmark ")) {
-                unmarkTask(input, tasks, taskCount);
-            } else if (taskCount < MAX_TASKS) {
+                unmarkTask(input, tasks);
+            } else if (!tasks.isFull()) {
                 Task task = createTask(input);
                 if (task == null) {
                     System.out.println("Please enter todo, deadline, event, list, mark, unmark, or bye.");
                 } else {
-                    tasks[taskCount] = task;
-                    taskCount++;
-                    showAddedTask(task, taskCount);
+                    tasks.add(task);
+                    showAddedTask(task, tasks.size());
                 }
             } else {
-                System.out.println("Sorry, I can only remember " + MAX_TASKS + " tasks.");
+                System.out.println("Sorry, I cannot remember any more tasks.");
             }
             System.out.println(LINE);
         }
@@ -65,10 +62,10 @@ public class Buddy {
         System.out.println(LINE);
     }
 
-    private static void showTasks(Task[] tasks, int taskCount) {
+    private static void showTasks(TaskList tasks) {
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + ". " + tasks[i]);
+        for (int i = 1; i <= tasks.size(); i++) {
+            System.out.println(i + ". " + tasks.getTask(i));
         }
     }
 
@@ -124,35 +121,33 @@ public class Buddy {
         System.out.println("Now you have " + taskCount + " " + taskLabel + " in the list.");
     }
 
-    private static void markTask(String input, Task[] tasks, int taskCount) {
+    private static void markTask(String input, TaskList tasks) {
         try {
-            int taskNumber = getTaskNumber(input, "mark ".length(), taskCount);
-            tasks[taskNumber - 1].markAsDone();
+            int taskNumber = getTaskNumber(input, "mark ".length());
+            Task task = tasks.getTask(taskNumber);
+            task.markAsDone();
             System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks[taskNumber - 1]);
+            System.out.println("  " + task);
         } catch (IllegalArgumentException e) {
             System.out.println("Please give me a valid task number to mark.");
         }
     }
 
-    private static void unmarkTask(String input, Task[] tasks, int taskCount) {
+    private static void unmarkTask(String input, TaskList tasks) {
         try {
-            int taskNumber = getTaskNumber(input, "unmark ".length(), taskCount);
-            tasks[taskNumber - 1].markAsNotDone();
+            int taskNumber = getTaskNumber(input, "unmark ".length());
+            Task task = tasks.getTask(taskNumber);
+            task.markAsNotDone();
             System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks[taskNumber - 1]);
+            System.out.println("  " + task);
         } catch (IllegalArgumentException e) {
             System.out.println("Please give me a valid task number to unmark.");
         }
     }
 
-    private static int getTaskNumber(String input, int commandLength, int taskCount) {
+    private static int getTaskNumber(String input, int commandLength) {
         try {
-            int taskNumber = Integer.parseInt(input.substring(commandLength));
-            if (taskNumber < 1 || taskNumber > taskCount) {
-                throw new IllegalArgumentException("Task number is out of range.");
-            }
-            return taskNumber;
+            return Integer.parseInt(input.substring(commandLength));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Task number must be an integer.", e);
         }
