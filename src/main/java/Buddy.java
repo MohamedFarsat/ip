@@ -21,7 +21,7 @@ public class Buddy {
                 + "|____/ \\__,_|\\__,_|\\__,_|\\__, |\n"
                 + "                          |___/ \n";
         Scanner scanner = new Scanner(System.in);
-        String[] tasks = new String[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0;
 
         System.out.println(LINE);
@@ -42,8 +42,26 @@ public class Buddy {
                 for (int i = 0; i < taskCount; i++) {
                     System.out.println((i + 1) + ". " + tasks[i]);
                 }
+            } else if (input.startsWith("mark ")) {
+                try {
+                    int taskNumber = Integer.parseInt(input.substring(5));
+                    tasks[taskNumber - 1].markAsDone();
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasks[taskNumber - 1]);
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+                    System.out.println("Please give me a valid task number to mark.");
+                }
+            } else if (input.startsWith("unmark ")) {
+                try {
+                    int taskNumber = Integer.parseInt(input.substring(7));
+                    tasks[taskNumber - 1].markAsNotDone();
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasks[taskNumber - 1]);
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+                    System.out.println("Please give me a valid task number to unmark.");
+                }
             } else if (taskCount < MAX_TASKS) {
-                tasks[taskCount] = input;
+                tasks[taskCount] = new Task(input);
                 taskCount++;
                 System.out.println("added: " + input);
             } else {
