@@ -5,6 +5,7 @@ import java.util.Scanner;
  */
 public class Buddy {
     public static final String NAME = "Buddy";
+    private static final int MAX_TASKS = 100;
     private static final String LINE = "---------------------------------------------------------------";
 
     /**
@@ -20,6 +21,8 @@ public class Buddy {
                 + "|____/ \\__,_|\\__,_|\\__,_|\\__, |\n"
                 + "                          |___/ \n";
         Scanner scanner = new Scanner(System.in);
+        String[] tasks = new String[MAX_TASKS];
+        int taskCount = 0;
 
         System.out.println(LINE);
         System.out.println(banner);
@@ -35,7 +38,17 @@ public class Buddy {
                 System.out.println(LINE);
                 break;
             }
-            System.out.println(input);
+            if (input.equals("list")) {
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println((i + 1) + ". " + tasks[i]);
+                }
+            } else if (taskCount < MAX_TASKS) {
+                tasks[taskCount] = input;
+                taskCount++;
+                System.out.println("added: " + input);
+            } else {
+                System.out.println("Sorry, I can only remember " + MAX_TASKS + " tasks.");
+            }
             System.out.println(LINE);
         }
     }
