@@ -1,30 +1,15 @@
-# Duke User Guide
+# Buddy User Guide
 
-// Update the title above to match the actual product name
+Buddy is a simple chatbot that greets the user and exits.
 
-// Product screenshot goes here
+## Starting Buddy
 
-// Product intro goes here
+Run `src/main/java/Buddy.java` from IntelliJ IDEA.
 
-## Adding deadlines
+Expected output:
 
-// Describe the action and its outcome.
-
-// Give examples of usage
-
-Example: `keyword (optional arguments)`
-
-// A description of the expected outcome goes here
-
+```text
+Hello! I'm Buddy
+What can I do for you?
+Bye. Hope to see you again soon!
 ```
-expected output
-```
-
-## Feature ABC
-
-// Feature details
-
-
-## Feature XYZ
-
-// Feature details
