@@ -13,17 +13,30 @@ Hello! I'm Buddy
 What can I do for you?
 ```
 
-## Adding Tasks
+## Adding Todos
 
-Type a task description to add it to Buddy's task list.
+Use `todo` followed by a task description to add a todo task.
 
-Example: `read book`
+Example: `todo read book`
 
 Expected output:
 
 ```text
-added: read book
+Got it. I've added this task:
+  [T][ ] read book
 ```
+
+## Adding Deadlines
+
+Use `deadline` followed by a task description and `/by` to add a deadline.
+
+Example: `deadline return book /by Sunday`
+
+## Adding Events
+
+Use `event` followed by a task description, `/from`, and `/to` to add an event.
+
+Example: `event project meeting /from Mon 2pm /to 4pm`
 
 ## Listing Tasks
 
@@ -32,8 +45,8 @@ Use `list` to show all tasks.
 Expected output:
 
 ```text
-1. [ ] read book
-2. [X] return book
+1. [T][ ] read book
+2. [D][X] return book (by: Sunday)
 ```
 
 ## Marking Tasks

@@ -39,12 +39,30 @@ public class Task {
     }
 
     /**
+     * Returns the icon that identifies this task type.
+     *
+     * @return task type icon
+     */
+    public String getTypeIcon() {
+        return "T";
+    }
+
+    /**
+     * Returns the text that describes this task.
+     *
+     * @return task description
+     */
+    protected String getDescription() {
+        return description;
+    }
+
+    /**
      * Returns the display text for this task.
      *
      * @return task status and description
      */
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + getTypeIcon() + "][" + getStatusIcon() + "] " + description;
     }
 }

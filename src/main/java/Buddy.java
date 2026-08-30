@@ -35,9 +35,14 @@ public class Buddy {
             } else if (input.startsWith("unmark ")) {
                 unmarkTask(input, tasks, taskCount);
             } else if (taskCount < MAX_TASKS) {
-                tasks[taskCount] = new Task(input);
-                taskCount++;
-                System.out.println("added: " + input);
+                Task task = createTask(input);
+                if (task == null) {
+                    System.out.println("Please enter todo, deadline, event, list, mark, unmark, or bye.");
+                } else {
+                    tasks[taskCount] = task;
+                    taskCount++;
+                    showAddedTask(task, taskCount);
+                }
             } else {
                 System.out.println("Sorry, I can only remember " + MAX_TASKS + " tasks.");
             }
@@ -61,9 +66,62 @@ public class Buddy {
     }
 
     private static void showTasks(Task[] tasks, int taskCount) {
+        System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < taskCount; i++) {
             System.out.println((i + 1) + ". " + tasks[i]);
         }
+    }
+
+    private static Task createTask(String input) {
+        if (input.startsWith("todo ")) {
+            return new Todo(input.substring("todo ".length()));
+        }
+        if (input.startsWith("deadline ")) {
+            return createDeadline(input);
+        }
+        if (input.startsWith("event ")) {
+            return createEvent(input);
+        }
+        return new Todo(input);
+    }
+
+    private static Task createDeadline(String input) {
+        String content = input.substring("deadline ".length());
+        int byIndex = content.indexOf(" /by ");
+        if (byIndex == -1) {
+            return null;
+        }
+
+        String description = content.substring(0, byIndex);
+        String by = content.substring(byIndex + " /by ".length());
+        if (description.isBlank() || by.isBlank()) {
+            return null;
+        }
+        return new Deadline(description, by);
+    }
+
+    private static Task createEvent(String input) {
+        String content = input.substring("event ".length());
+        int fromIndex = content.indexOf(" /from ");
+        int toIndex = content.indexOf(" /to ");
+        if (fromIndex == -1 || toIndex == -1 || fromIndex > toIndex) {
+            return null;
+        }
+
+        String description = content.substring(0, fromIndex);
+        String from = content.substring(fromIndex + " /from ".length(), toIndex);
+        String to = content.substring(toIndex + " /to ".length());
+        if (description.isBlank() || from.isBlank() || to.isBlank()) {
+            return null;
+        }
+        return new Event(description, from, to);
+    }
+
+    private static void showAddedTask(Task task, int taskCount) {
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        String taskLabel = taskCount == 1 ? "task" : "tasks";
+        System.out.println("Now you have " + taskCount + " " + taskLabel + " in the list.");
     }
 
     private static void markTask(String input, Task[] tasks, int taskCount) {
