@@ -1,3 +1,5 @@
+package buddy.task;
+
 /**
  * Represents a task without any date or time.
  */

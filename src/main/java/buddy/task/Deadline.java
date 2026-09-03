@@ -1,3 +1,5 @@
+package buddy.task;
+
 /**
  * Represents a task that should be completed by a specific date or time.
  */

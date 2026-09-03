@@ -1,4 +1,13 @@
+package buddy;
+
 import java.util.Scanner;
+
+import buddy.exception.BuddyException;
+import buddy.task.Deadline;
+import buddy.task.Event;
+import buddy.task.Task;
+import buddy.task.TaskList;
+import buddy.task.Todo;
 
 /**
  * Entry point for Buddy, a simple chatbot used for the iP.
