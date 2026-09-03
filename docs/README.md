@@ -4,7 +4,7 @@ Buddy is a simple chatbot that stores tasks and tracks whether they are done.
 
 ## Starting Buddy
 
-Run `src/main/java/Buddy.java` from IntelliJ IDEA.
+Run `src/main/java/buddy/Buddy.java` from IntelliJ IDEA.
 
 Expected output:
 
