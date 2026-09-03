@@ -33,10 +33,12 @@ public class TaskList {
      *
      * @param taskNumber one-based task number
      * @return matching task
+     * @throws BuddyException if there is no task with that number
      */
-    public Task getTask(int taskNumber) {
+    public Task getTask(int taskNumber) throws BuddyException {
         if (taskNumber < 1 || taskNumber > size) {
-            throw new IllegalArgumentException("Task number is out of range.");
+            throw new BuddyException("There is no task number " + taskNumber
+                    + ". You have " + size + " task(s).");
         }
         return tasks[taskNumber - 1];
     }
