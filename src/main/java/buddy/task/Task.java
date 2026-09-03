@@ -1,3 +1,5 @@
+package buddy.task;
+
 /**
  * Represents a task tracked by Buddy.
  */

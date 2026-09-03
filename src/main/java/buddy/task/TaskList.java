@@ -1,3 +1,7 @@
+package buddy.task;
+
+import buddy.exception.BuddyException;
+
 /**
  * Stores and manages the tasks remembered by Buddy.
  */
