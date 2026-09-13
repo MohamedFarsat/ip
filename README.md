@@ -24,3 +24,17 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    ```
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## Building a JAR file
+
+This project uses [Gradle](https://gradle.org/) to build an executable JAR. From the project root, run:
+
+```
+gradlew.bat jar
+```
+
+(On macOS/Linux, use `./gradlew jar` instead.) This downloads the pinned Gradle version automatically the first time, so no separate Gradle install is needed. The JAR is created at `build/libs/buddy.jar`. To run it, copy it into an empty folder, open a terminal there, and run:
+
+```
+java -jar buddy.jar
+```

@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClass = 'buddy.Buddy'
+}
+
+// Buddy has no external dependencies, so a plain JAR (just our own compiled
+// classes plus a manifest pointing at the main class) is enough to run with
+// `java -jar`. A project with third-party dependencies would instead need a
+// "fat/shadow" JAR (e.g. via the Shadow plugin) that bundles those
+// dependencies' classes inside the JAR as well.
+jar {
+    archiveBaseName = 'buddy'
+    manifest {
+        attributes 'Main-Class': 'buddy.Buddy'
+    }
+}
+
+run {
+    standardInput = System.in
+}
