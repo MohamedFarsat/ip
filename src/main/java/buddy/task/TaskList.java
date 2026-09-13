@@ -1,5 +1,8 @@
 package buddy.task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import buddy.exception.BuddyException;
 
 /**
@@ -63,5 +66,19 @@ public class TaskList {
      */
     public boolean isFull() {
         return size == MAX_TASKS;
+    }
+
+    /**
+     * Returns a snapshot of all tasks currently in the list, in order. Used
+     * when saving the list to disk.
+     *
+     * @return a new list containing all tasks
+     */
+    public List<Task> getAll() {
+        List<Task> all = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            all.add(tasks[i]);
+        }
+        return all;
     }
 }

@@ -36,4 +36,15 @@ public class Deadline extends Task {
     public String toString() {
         return super.toString() + " (by: " + by + ")";
     }
+
+    /**
+     * Returns this deadline encoded for storage, with the due date appended
+     * after the fields common to all tasks.
+     *
+     * @return this deadline encoded for storage
+     */
+    @Override
+    public String toFileFormat() {
+        return super.toFileFormat() + " | " + by;
+    }
 }

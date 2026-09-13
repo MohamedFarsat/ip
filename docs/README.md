@@ -61,6 +61,12 @@ Use `unmark` followed by the task number to mark a task as not done.
 
 Example: `unmark 2`
 
+## Saving Data
+
+Buddy automatically saves the task list to `./data/buddy.txt` whenever it
+changes, and loads it back in the next time Buddy starts. There is no need
+to save manually.
+
 ## Exiting
 
 Use `bye` to exit Buddy.

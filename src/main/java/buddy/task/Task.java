@@ -67,4 +67,15 @@ public class Task {
     public String toString() {
         return "[" + getTypeIcon() + "][" + getStatusIcon() + "] " + description;
     }
+
+    /**
+     * Returns this task encoded as a single line for storage on disk, in the
+     * form {@code <type> | <0 or 1> | <description>}. Subclasses that carry
+     * extra fields (e.g. a deadline's due date) append them after this.
+     *
+     * @return this task encoded for storage
+     */
+    public String toFileFormat() {
+        return getTypeIcon() + " | " + (isDone ? "1" : "0") + " | " + description;
+    }
 }
