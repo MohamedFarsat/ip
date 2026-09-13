@@ -61,6 +61,20 @@ Use `unmark` followed by the task number to mark a task as not done.
 
 Example: `unmark 2`
 
+## Deleting Tasks
+
+Use `delete` followed by the task number to remove a task from the list.
+
+Example: `delete 3`
+
+Expected output:
+
+```text
+Noted. I've removed this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 1 task in the list.
+```
+
 ## Exiting
 
 Use `bye` to exit Buddy.

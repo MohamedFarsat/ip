@@ -90,9 +90,12 @@ public class Buddy {
         case "event":
             addTask(createEvent(description), tasks);
             break;
+        case "delete":
+            deleteTask(description, tasks);
+            break;
         default:
             throw new BuddyException(
-                    "I don't recognise that command. Try todo, deadline, event, list, mark, unmark, or bye.");
+                    "I don't recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
         }
     }
 
@@ -163,9 +166,6 @@ public class Buddy {
     }
 
     private static void addTask(Task task, TaskList tasks) throws BuddyException {
-        if (tasks.isFull()) {
-            throw new BuddyException("Sorry, I cannot remember any more tasks.");
-        }
         tasks.add(task);
         showAddedTask(task, tasks.size());
     }
@@ -191,8 +191,16 @@ public class Buddy {
         System.out.println("  " + task);
     }
 
+    private static void deleteTask(String description, TaskList tasks) throws BuddyException {
+        Task removedTask = tasks.remove(getTaskNumber(description, "delete"));
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removedTask);
+        String taskLabel = tasks.size() == 1 ? "task" : "tasks";
+        System.out.println("Now you have " + tasks.size() + " " + taskLabel + " in the list.");
+    }
+
     /**
-     * Parses the task number that should follow a mark or unmark command.
+     * Parses the task number that should follow a mark, unmark, or delete command.
      *
      * @param description text supplied after the command word
      * @param commandName name of the command, used in the error message
