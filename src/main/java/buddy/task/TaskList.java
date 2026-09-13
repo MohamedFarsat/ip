@@ -1,35 +1,45 @@
 package buddy.task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import buddy.exception.BuddyException;
 
 /**
  * Stores and manages the tasks remembered by Buddy.
+ *
+ * <p>Tasks are kept in an {@link ArrayList} rather than a fixed-size array, so the
+ * list can grow to hold any number of tasks and shrink again when a task is deleted.
  */
 public class TaskList {
-    private static final int MAX_TASKS = 100;
-
-    private final Task[] tasks;
-    private int size;
+    private final List<Task> tasks;
 
     /**
      * Creates an empty task list.
      */
     public TaskList() {
-        tasks = new Task[MAX_TASKS];
-        size = 0;
+        tasks = new ArrayList<>();
     }
 
     /**
-     * Adds a task to the list if there is space.
+     * Adds a task to the list.
      *
      * @param task task to add
      */
     public void add(Task task) {
-        if (isFull()) {
-            throw new IllegalStateException("Task list is full.");
-        }
-        tasks[size] = task;
-        size++;
+        tasks.add(task);
+    }
+
+    /**
+     * Removes and returns the task at the given one-based task number.
+     *
+     * @param taskNumber one-based task number
+     * @return the task that was removed
+     * @throws BuddyException if there is no task with that number
+     */
+    public Task remove(int taskNumber) throws BuddyException {
+        checkTaskNumber(taskNumber);
+        return tasks.remove(taskNumber - 1);
     }
 
     /**
@@ -40,11 +50,8 @@ public class TaskList {
      * @throws BuddyException if there is no task with that number
      */
     public Task getTask(int taskNumber) throws BuddyException {
-        if (taskNumber < 1 || taskNumber > size) {
-            throw new BuddyException("There is no task number " + taskNumber
-                    + ". You have " + size + " task(s).");
-        }
-        return tasks[taskNumber - 1];
+        checkTaskNumber(taskNumber);
+        return tasks.get(taskNumber - 1);
     }
 
     /**
@@ -53,15 +60,13 @@ public class TaskList {
      * @return task count
      */
     public int size() {
-        return size;
+        return tasks.size();
     }
 
-    /**
-     * Checks whether the task list has reached its maximum size.
-     *
-     * @return true if no more tasks can be added
-     */
-    public boolean isFull() {
-        return size == MAX_TASKS;
+    private void checkTaskNumber(int taskNumber) throws BuddyException {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new BuddyException("There is no task number " + taskNumber
+                    + ". You have " + tasks.size() + " task(s).");
+        }
     }
 }
