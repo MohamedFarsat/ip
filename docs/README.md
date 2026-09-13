@@ -75,6 +75,12 @@ Noted. I've removed this task:
 Now you have 1 task in the list.
 ```
 
+## Saving Data
+
+Buddy automatically saves the task list to `./data/buddy.txt` whenever it
+changes, and loads it back in the next time Buddy starts. There is no need
+to save manually.
+
 ## Exiting
 
 Use `bye` to exit Buddy.

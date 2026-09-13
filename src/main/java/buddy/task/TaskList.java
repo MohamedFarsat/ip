@@ -69,4 +69,14 @@ public class TaskList {
                     + ". You have " + tasks.size() + " task(s).");
         }
     }
+
+    /**
+     * Returns a snapshot of all tasks currently in the list, in order. Used
+     * when saving the list to disk.
+     *
+     * @return a new list containing all tasks
+     */
+    public List<Task> getAll() {
+        return new ArrayList<>(tasks);
+    }
 }

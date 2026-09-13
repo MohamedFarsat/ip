@@ -39,4 +39,15 @@ public class Event extends Task {
     public String toString() {
         return super.toString() + " (from: " + from + " to: " + to + ")";
     }
+
+    /**
+     * Returns this event encoded for storage, with the start and end times
+     * appended after the fields common to all tasks.
+     *
+     * @return this event encoded for storage
+     */
+    @Override
+    public String toFileFormat() {
+        return super.toFileFormat() + " | " + from + " | " + to;
+    }
 }
