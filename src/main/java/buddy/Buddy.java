@@ -1,7 +1,6 @@
 package buddy;
 
 import java.nio.file.Path;
-import java.util.Scanner;
 
 import buddy.exception.BuddyException;
 import buddy.storage.Storage;
@@ -10,13 +9,12 @@ import buddy.task.Event;
 import buddy.task.Task;
 import buddy.task.TaskList;
 import buddy.task.Todo;
+import buddy.ui.Ui;
 
 /**
  * Entry point for Buddy, a simple chatbot used for the iP.
  */
 public class Buddy {
-    public static final String NAME = "Buddy";
-    private static final String LINE = "---------------------------------------------------------------";
     private static final Path SAVE_FILE_PATH = Path.of("data", "buddy.txt");
 
     /**
@@ -25,45 +23,30 @@ public class Buddy {
      * @param args command line arguments supplied by the runtime
      */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Ui ui = new Ui();
         Storage storage = new Storage(SAVE_FILE_PATH);
         TaskList tasks = new TaskList();
         for (Task task : storage.load()) {
             tasks.add(task);
         }
 
-        showGreeting();
+        ui.showGreeting();
 
-        while (scanner.hasNextLine()) {
-            String input = scanner.nextLine();
-            System.out.println(LINE);
+        while (ui.hasNextCommand()) {
+            String input = ui.readCommand();
+            ui.showLine();
             if (input.equals("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
-                System.out.println(LINE);
+                ui.showGoodbye();
+                ui.showLine();
                 break;
             }
             try {
-                handleCommand(input, tasks, storage);
+                handleCommand(input, tasks, storage, ui);
             } catch (BuddyException e) {
-                System.out.println("OOPS!!! " + e.getMessage());
+                ui.showError(e.getMessage());
             }
-            System.out.println(LINE);
+            ui.showLine();
         }
-    }
-
-    private static void showGreeting() {
-        String banner = " ____            _     _       \n"
-                + "| __ ) _   _  __| | __| |_   _ \n"
-                + "|  _ \\| | | |/ _` |/ _` | | | |\n"
-                + "| |_) | |_| | (_| | (_| | |_| |\n"
-                + "|____/ \\__,_|\\__,_|\\__,_|\\__, |\n"
-                + "                          |___/ \n";
-
-        System.out.println(LINE);
-        System.out.println(banner);
-        System.out.println("Hello! I'm " + NAME);
-        System.out.println("What can I do for you?");
-        System.out.println(LINE);
     }
 
     /**
@@ -72,45 +55,39 @@ public class Buddy {
      * @param input full line typed by the user
      * @param tasks task list to read from or update
      * @param storage storage used to persist the task list after it changes
+     * @param ui used to show the result of the command to the user
      * @throws BuddyException if the command is unknown or its arguments are invalid
      */
-    private static void handleCommand(String input, TaskList tasks, Storage storage) throws BuddyException {
+    private static void handleCommand(String input, TaskList tasks, Storage storage, Ui ui) throws BuddyException {
         String[] parts = input.split(" ", 2);
         String command = parts[0];
         String description = parts.length > 1 ? parts[1].trim() : "";
 
         switch (command) {
         case "list":
-            showTasks(tasks);
+            ui.showTaskList(tasks.getAll());
             break;
         case "mark":
-            markTask(description, tasks, storage);
+            markTask(description, tasks, storage, ui);
             break;
         case "unmark":
-            unmarkTask(description, tasks, storage);
+            unmarkTask(description, tasks, storage, ui);
             break;
         case "todo":
-            addTask(new Todo(requireDescription(description, "A todo", "todo")), tasks, storage);
+            addTask(new Todo(requireDescription(description, "A todo", "todo")), tasks, storage, ui);
             break;
         case "deadline":
-            addTask(createDeadline(description), tasks, storage);
+            addTask(createDeadline(description), tasks, storage, ui);
             break;
         case "event":
-            addTask(createEvent(description), tasks, storage);
+            addTask(createEvent(description), tasks, storage, ui);
             break;
         case "delete":
-            deleteTask(description, tasks, storage);
+            deleteTask(description, tasks, storage, ui);
             break;
         default:
             throw new BuddyException(
                     "I don't recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
-        }
-    }
-
-    private static void showTasks(TaskList tasks) throws BuddyException {
-        System.out.println("Here are the tasks in your list:");
-        for (int i = 1; i <= tasks.size(); i++) {
-            System.out.println(i + ". " + tasks.getTask(i));
         }
     }
 
@@ -173,42 +150,30 @@ public class Buddy {
         return new Event(taskDescription, from, to);
     }
 
-    private static void addTask(Task task, TaskList tasks, Storage storage) throws BuddyException {
+    private static void addTask(Task task, TaskList tasks, Storage storage, Ui ui) throws BuddyException {
         tasks.add(task);
         storage.save(tasks.getAll());
-        showAddedTask(task, tasks.size());
+        ui.showTaskAdded(task, tasks.size());
     }
 
-    private static void showAddedTask(Task task, int taskCount) {
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        String taskLabel = taskCount == 1 ? "task" : "tasks";
-        System.out.println("Now you have " + taskCount + " " + taskLabel + " in the list.");
-    }
-
-    private static void markTask(String description, TaskList tasks, Storage storage) throws BuddyException {
+    private static void markTask(String description, TaskList tasks, Storage storage, Ui ui) throws BuddyException {
         Task task = tasks.getTask(getTaskNumber(description, "mark"));
         task.markAsDone();
         storage.save(tasks.getAll());
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + task);
+        ui.showTaskMarked(task);
     }
 
-    private static void unmarkTask(String description, TaskList tasks, Storage storage) throws BuddyException {
+    private static void unmarkTask(String description, TaskList tasks, Storage storage, Ui ui) throws BuddyException {
         Task task = tasks.getTask(getTaskNumber(description, "unmark"));
         task.markAsNotDone();
         storage.save(tasks.getAll());
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + task);
+        ui.showTaskUnmarked(task);
     }
 
-    private static void deleteTask(String description, TaskList tasks, Storage storage) throws BuddyException {
+    private static void deleteTask(String description, TaskList tasks, Storage storage, Ui ui) throws BuddyException {
         Task removedTask = tasks.remove(getTaskNumber(description, "delete"));
         storage.save(tasks.getAll());
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removedTask);
-        String taskLabel = tasks.size() == 1 ? "task" : "tasks";
-        System.out.println("Now you have " + tasks.size() + " " + taskLabel + " in the list.");
+        ui.showTaskRemoved(removedTask, tasks.size());
     }
 
     /**
