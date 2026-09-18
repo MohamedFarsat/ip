@@ -1,8 +1,16 @@
 package buddy.parser;
 
+import buddy.command.AddCommand;
+import buddy.command.Command;
+import buddy.command.DeleteCommand;
+import buddy.command.ExitCommand;
+import buddy.command.ListCommand;
+import buddy.command.MarkCommand;
+import buddy.command.UnmarkCommand;
 import buddy.exception.BuddyException;
 import buddy.task.Deadline;
 import buddy.task.Event;
+import buddy.task.Todo;
 
 /**
  * Makes sense of the raw text the user types: splits a line into a command
@@ -15,12 +23,46 @@ public class Parser {
     }
 
     /**
+     * Parses a full line typed by the user into a {@link Command} ready to be executed.
+     *
+     * @param input full line typed by the user
+     * @return the command described by the input
+     * @throws BuddyException if the command is unknown or its arguments are invalid
+     */
+    public static Command parse(String input) throws BuddyException {
+        String command = getCommandWord(input);
+        String arguments = getArguments(input);
+
+        switch (command) {
+        case "list":
+            return new ListCommand();
+        case "mark":
+            return new MarkCommand(parseTaskNumber(arguments, "mark"));
+        case "unmark":
+            return new UnmarkCommand(parseTaskNumber(arguments, "unmark"));
+        case "todo":
+            return new AddCommand(new Todo(parseDescription(arguments, "A todo", "todo")));
+        case "deadline":
+            return new AddCommand(parseDeadline(arguments));
+        case "event":
+            return new AddCommand(parseEvent(arguments));
+        case "delete":
+            return new DeleteCommand(parseTaskNumber(arguments, "delete"));
+        case "bye":
+            return new ExitCommand();
+        default:
+            throw new BuddyException(
+                    "I don't recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
+        }
+    }
+
+    /**
      * Returns the command word, i.e. the first word of the input.
      *
      * @param input full line typed by the user
      * @return the command word
      */
-    public static String getCommandWord(String input) {
+    private static String getCommandWord(String input) {
         return input.split(" ", 2)[0];
     }
 
@@ -30,7 +72,7 @@ public class Parser {
      * @param input full line typed by the user
      * @return the arguments, or an empty string if there are none
      */
-    public static String getArguments(String input) {
+    private static String getArguments(String input) {
         String[] parts = input.split(" ", 2);
         return parts.length > 1 ? parts[1].trim() : "";
     }
@@ -45,7 +87,7 @@ public class Parser {
      * @return the description, unchanged
      * @throws BuddyException if the description is blank
      */
-    public static String parseDescription(String arguments, String taskLabel, String commandWord)
+    private static String parseDescription(String arguments, String taskLabel, String commandWord)
             throws BuddyException {
         if (arguments.isBlank()) {
             throw new BuddyException(taskLabel + " needs a description, e.g. \"" + commandWord + " read book\".");
@@ -60,7 +102,7 @@ public class Parser {
      * @return the deadline described by the arguments
      * @throws BuddyException if the description or due date is missing
      */
-    public static Deadline parseDeadline(String arguments) throws BuddyException {
+    private static Deadline parseDeadline(String arguments) throws BuddyException {
         int byIndex = arguments.indexOf(" /by ");
         if (byIndex == -1) {
             parseDescription(arguments, "A deadline", "deadline");
@@ -86,7 +128,7 @@ public class Parser {
      * @return the event described by the arguments
      * @throws BuddyException if the description, start time, or end time is missing
      */
-    public static Event parseEvent(String arguments) throws BuddyException {
+    private static Event parseEvent(String arguments) throws BuddyException {
         int fromIndex = arguments.indexOf(" /from ");
         int toIndex = arguments.indexOf(" /to ");
         if (fromIndex == -1 || toIndex == -1 || fromIndex > toIndex) {
@@ -116,7 +158,7 @@ public class Parser {
      * @return the parsed task number
      * @throws BuddyException if no number was given or it is not a valid integer
      */
-    public static int parseTaskNumber(String arguments, String commandName) throws BuddyException {
+    private static int parseTaskNumber(String arguments, String commandName) throws BuddyException {
         if (arguments.isBlank()) {
             throw new BuddyException("Tell me which task number to " + commandName + ", e.g. \"" + commandName + " 2\".");
         }
