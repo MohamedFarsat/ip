@@ -4,6 +4,7 @@ import buddy.command.AddCommand;
 import buddy.command.Command;
 import buddy.command.DeleteCommand;
 import buddy.command.ExitCommand;
+import buddy.command.FindCommand;
 import buddy.command.ListCommand;
 import buddy.command.MarkCommand;
 import buddy.command.UnmarkCommand;
@@ -48,11 +49,14 @@ public class Parser {
             return new AddCommand(parseEvent(arguments));
         case "delete":
             return new DeleteCommand(parseTaskNumber(arguments, "delete"));
+        case "find":
+            return new FindCommand(parseKeyword(arguments));
         case "bye":
             return new ExitCommand();
         default:
             throw new BuddyException(
-                    "I don't recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
+                    "I don't recognise that command. Try todo, deadline, event, list, find, mark, unmark, "
+                            + "delete, or bye.");
         }
     }
 
@@ -148,6 +152,21 @@ public class Parser {
             throw new BuddyException("An event needs both a start (/from) and an end (/to) time.");
         }
         return new Event(description, from, to);
+    }
+
+    /**
+     * Checks that a search keyword is present, since a find command with
+     * nothing to search for is meaningless.
+     *
+     * @param arguments text supplied after the command word
+     * @return the keyword, unchanged
+     * @throws BuddyException if no keyword was given
+     */
+    private static String parseKeyword(String arguments) throws BuddyException {
+        if (arguments.isBlank()) {
+            throw new BuddyException("Tell me what to search for, e.g. \"find book\".");
+        }
+        return arguments;
     }
 
     /**

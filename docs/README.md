@@ -75,6 +75,21 @@ Noted. I've removed this task:
 Now you have 1 task in the list.
 ```
 
+## Finding Tasks
+
+Use `find` followed by a keyword to show tasks whose description contains
+that keyword. The search is case-insensitive.
+
+Example: `find book`
+
+Expected output:
+
+```text
+Here are the matching tasks in your list:
+1. [T][ ] read book
+2. [D][ ] return book (by: Sunday)
+```
+
 ## Saving Data
 
 Buddy automatically saves the task list to `./data/buddy.txt` whenever it
