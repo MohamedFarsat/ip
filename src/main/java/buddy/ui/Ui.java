@@ -88,6 +88,20 @@ public class Ui {
      */
     public void showTaskList(List<Task> tasks) {
         System.out.println("Here are the tasks in your list:");
+        printNumberedTasks(tasks);
+    }
+
+    /**
+     * Prints every task in the given list that matched a search, numbered from 1.
+     *
+     * @param tasks matching tasks to display, in order
+     */
+    public void showMatchingTaskList(List<Task> tasks) {
+        System.out.println("Here are the matching tasks in your list:");
+        printNumberedTasks(tasks);
+    }
+
+    private void printNumberedTasks(List<Task> tasks) {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + ". " + tasks.get(i));
         }
